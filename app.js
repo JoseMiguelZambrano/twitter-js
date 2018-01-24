@@ -1,14 +1,24 @@
 const express = require( 'express' );
 const app = express();
 const morgan = require('morgan');
+const nunjucks = require('nunjucks');
+const people = [{name: 'Full'}, {name: 'Stacker'}, {name: 'Son'}];
+const routes = require('./routes');
+
+
+
+app.engine('html', nunjucks.render);
+app.set('view engine', 'html')
+nunjucks.configure('views', {noCache: true});
 
 app.use(function (req, res, next) {
     console.log(req.url)
     next();
 })
+
 app.use('/special/:id', function(req, res, next){
     console.log('haz llegado a un lugar especial');
-    next()
+    next();
 })
 
 app.use(morgan(function (tokens, req, res) {
@@ -19,9 +29,12 @@ app.use(morgan(function (tokens, req, res) {
       tokens.res(req, res, 'content-length'), '-',
       tokens['response-time'](req, res), 'ms'
     ].join(' ')
+    next();
   }))
 
-const = "Hola"
+app.use(express.static('public'))
+app.use('/', routes);  
+
 
 
 
